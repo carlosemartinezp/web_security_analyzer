@@ -1,5 +1,6 @@
 import sys
 from scanner.headers import analyze_headers
+from utils.report import generate_report
 
 # Define el orden de prioridad de las severidades
 SEVERITY_ORDER = {
@@ -66,7 +67,9 @@ def main():
     print(f"MEDIUM: {summary['MEDIUM']}")
     print(f"LOW:    {summary['LOW']}")
     print(f"OK:     {summary['OK']}")
-    
+
+    generate_report(url, findings, summary)    
 
 if __name__ == "__main__":
     main()
+    
