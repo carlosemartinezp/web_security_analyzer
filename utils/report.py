@@ -1,9 +1,14 @@
+import os
+
 def generate_report(url, findings, summary):
     """
     Genera un reporte en archivo de texto con los hallazgos.
     """
 
-    filename = "security_report.txt"
+    # Crear carpeta si no existe
+    os.makedirs("reports", exist_ok=True)
+
+    filename = "reports/security_report.txt"
 
     with open(filename, "w", encoding="utf-8") as file:
         file.write(f"URL: {url}\n\n")
