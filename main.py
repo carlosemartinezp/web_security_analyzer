@@ -1,4 +1,5 @@
 import sys
+from datetime import datetime
 from scanner.headers import analyze_headers
 from utils.report import generate_report
 
@@ -20,6 +21,7 @@ def main():
         return
 
     url = sys.argv[1]
+    timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
     print(f"\n[INFO] Analizando: {url}")
 
@@ -68,7 +70,7 @@ def main():
     print(f"LOW:    {summary['LOW']}")
     print(f"OK:     {summary['OK']}")
 
-    generate_report(url, findings, summary)    
+    generate_report(url, findings, summary, timestamp)
 
 if __name__ == "__main__":
     main()

@@ -1,6 +1,8 @@
 import os
 
-def generate_report(url, findings, summary):
+REPORTS_DIR = "reports"
+
+def generate_report(url, findings, summary, timestamp):
     """
     Genera un reporte en archivo de texto con los hallazgos.
     """
@@ -8,10 +10,19 @@ def generate_report(url, findings, summary):
     # Crear carpeta si no existe
     os.makedirs("reports", exist_ok=True)
 
-    filename = "reports/security_report.txt"
+    safe_url = url.replace("https://", "").replace("http://", "")
+    safe_url = safe_url.replace("/", "_").replace(".", "_")
+    
+    safe_timestamp = timestamp.replace(":", "-").replace(" ", "_")
+    
+    os.makedirs(REPORTS_DIR, exist_ok=True)
+    
+    filename = f"/security_report_{safe_url}_{safe_timestamp}.txt"
+    filepath = os.path.join(REPORTS_DIR, filename)
 
-    with open(filename, "w", encoding="utf-8") as file:
+    with open(filepath, "w", encoding="utf-8") as file:
         file.write(f"URL: {url}\n\n")
+        file.write(f"Timestamp: {timestamp}\n\n")
         file.write("=== HALLAZGOS ===\n\n")
 
         for finding in findings:
