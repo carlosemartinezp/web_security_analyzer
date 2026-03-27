@@ -43,6 +43,8 @@ def main():
         "OK": 0
     }
 
+    summary["total"] = len(findings)
+
     for finding in findings:
         severity = finding["severity"]
         header = finding["header"]
@@ -65,6 +67,7 @@ def main():
             print(f"     Recomendación: {recommendation}\n")
 
     print("=== RESUMEN ===")
+    print(f"TOTAL:  {summary['total']}")
     print(f"HIGH:   {summary['HIGH']}")
     print(f"MEDIUM: {summary['MEDIUM']}")
     print(f"LOW:    {summary['LOW']}")

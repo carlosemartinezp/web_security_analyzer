@@ -45,6 +45,7 @@ def generate_report(url, findings, summary, timestamp):
                 file.write(f"Recomendación: {recommendation}\n\n")
 
         file.write("=== RESUMEN ===\n")
+        file.write(f"TOTAL:  {summary['total']}\n")
         file.write(f"HIGH:   {summary['HIGH']}\n")
         file.write(f"MEDIUM: {summary['MEDIUM']}\n")
         file.write(f"LOW:    {summary['LOW']}\n")
