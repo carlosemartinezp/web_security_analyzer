@@ -17,7 +17,7 @@ def generate_report(url, findings, summary, timestamp):
     
     os.makedirs(REPORTS_DIR, exist_ok=True)
     
-    filename = f"/security_report_{safe_url}_{safe_timestamp}.txt"
+    filename = f"security_report_{safe_url}_{safe_timestamp}.txt"
     filepath = os.path.join(REPORTS_DIR, filename)
 
     with open(filepath, "w", encoding="utf-8") as file:
