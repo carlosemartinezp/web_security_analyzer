@@ -1,4 +1,6 @@
+from fileinput import filename
 import os
+import json
 
 REPORTS_DIR = "reports"
 
@@ -52,3 +54,29 @@ def generate_report(url, findings, summary, timestamp):
         file.write(f"OK:     {summary['OK']}\n")
 
     print(f"\n[INFO] Reporte generado: {filename}")
+
+def generate_json_report(url, findings, summary, timestamp):
+    """
+    Genera un reporte en formato JSON con los hallazgos.
+    """
+    report_data = {
+        "url": url,
+        "timestamp": timestamp,
+        "findings": findings,
+        "summary": summary
+    }
+
+    safe_url = url.replace("https://", "").replace("http://", "")
+    safe_url = safe_url.replace("/", "_").replace(".", "_")
+
+    safe_timestamp = timestamp.replace(":", "-").replace(" ", "_")
+
+    filename = f"security_report_{safe_url}_{safe_timestamp}.json"
+    filepath = os.path.join(REPORTS_DIR, filename)
+
+    os.makedirs(REPORTS_DIR, exist_ok=True)
+
+    with open(filepath, "w", encoding="utf-8") as file:
+        json.dump(report_data, file, indent=4)
+
+    print(f"[INFO] JSON generado: {filepath}")

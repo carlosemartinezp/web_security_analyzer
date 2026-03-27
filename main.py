@@ -1,7 +1,7 @@
 import sys
 from datetime import datetime
 from scanner.headers import analyze_headers
-from utils.report import generate_report
+from utils.report import generate_report, generate_json_report
 
 # Define el orden de prioridad de las severidades
 SEVERITY_ORDER = {
@@ -74,6 +74,7 @@ def main():
     print(f"OK:     {summary['OK']}")
 
     generate_report(url, findings, summary, timestamp)
+    generate_json_report(url, findings, summary, timestamp)
 
 if __name__ == "__main__":
     main()
