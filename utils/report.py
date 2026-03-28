@@ -59,11 +59,19 @@ def generate_json_report(url, findings, summary, timestamp):
     """
     Genera un reporte en formato JSON con los hallazgos.
     """
+    json_summary = {
+    "total": summary["total"],
+    "high": summary["HIGH"],
+    "medium": summary["MEDIUM"],
+    "low": summary["LOW"],
+    "ok": summary["OK"]
+    }
+    
     report_data = {
         "url": url,
         "timestamp": timestamp,
         "findings": findings,
-        "summary": summary
+        "summary": json_summary
     }
 
     safe_url = url.replace("https://", "").replace("http://", "")
