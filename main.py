@@ -21,6 +21,9 @@ def main():
         return
 
     url = sys.argv[1]
+    if not url.startswith(("http://", "https://")):
+        print("[ERROR] La URL debe comenzar con http:// o https://")
+        sys.exit(1)
     timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
     print(f"\n[INFO] Analizando: {url}")
