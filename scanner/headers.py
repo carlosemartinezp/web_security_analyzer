@@ -23,6 +23,63 @@ SECURITY_HEADERS = {
     }
 }
 
+def analyze_hsts(headers):
+    """
+    Analiza la configuración del header Strict-Transport-Security.
+    """
+
+    header_name = "Strict-Transport-Security"
+
+    if header_name not in headers:
+        return {
+            "header": header_name,
+            "status": "missing",
+            "severity": "HIGH",
+            "description": "HSTS no está configurado.",
+            "recommendation": "Configurar Strict-Transport-Security con max-age de al menos 31536000 segundos."
+        }
+
+    hsts_value = headers[header_name].lower()
+
+    if "max-age=" not in hsts_value:
+        return {
+            "header": header_name,
+            "status": "misconfigured",
+            "severity": "MEDIUM",
+            "description": f"HSTS está presente pero no define max-age: {headers[header_name]}",
+            "recommendation": "Agregar max-age al header HSTS. Valor recomendado: 31536000 segundos o superior."
+        }
+
+    max_age_part = hsts_value.split("max-age=")[1].split(";")[0].strip()
+
+    try:
+        max_age = int(max_age_part)
+    except ValueError:
+        return {
+            "header": header_name,
+            "status": "misconfigured",
+            "severity": "MEDIUM",
+            "description": f"HSTS define un max-age inválido: {headers[header_name]}",
+            "recommendation": "Usar un valor numérico válido para max-age. Valor recomendado: 31536000 segundos o superior."
+        }
+
+    if max_age < 31536000:
+        return {
+            "header": header_name,
+            "status": "weak",
+            "severity": "MEDIUM",
+            "description": f"HSTS está configurado con max-age bajo: {max_age} segundos.",
+            "recommendation": "Aumentar max-age a por lo menos 31536000 segundos."
+        }
+
+    return {
+        "header": header_name,
+        "status": "present",
+        "severity": "OK",
+        "description": f"HSTS está configurado con max-age adecuado: {max_age} segundos.",
+        "recommendation": "No se requiere acción."
+    }
+
 
 def analyze_headers(url):
     """
@@ -37,6 +94,10 @@ def analyze_headers(url):
     findings = []
 
     for header, info in SECURITY_HEADERS.items():
+        if header == "Strict-Transport-Security":
+            findings.append(analyze_hsts(headers))
+            continue
+
         description = info["description"]
         severity = info["severity"]
         recommendation = info["recommendation"]
