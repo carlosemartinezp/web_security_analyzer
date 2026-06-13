@@ -72,11 +72,29 @@ def analyze_hsts(headers):
             "recommendation": "Aumentar max-age a por lo menos 31536000 segundos."
         }
 
+    if "includesubdomains" not in hsts_value:
+        return {
+            "header": header_name,
+            "status": "partial",
+            "severity": "LOW",
+            "description": f"HSTS tiene un max-age adecuado, pero no incluye includeSubDomains: {headers[header_name]}",
+            "recommendation": "Agregar includeSubDomains si todos los subdominios soportan HTTPS correctamente."
+        }
+
+    if "preload" not in hsts_value:
+        return {
+            "header": header_name,
+            "status": "informational",
+            "severity": "INFO",
+            "description": f"HSTS está bien configurado, pero no incluye preload: {headers[header_name]}",
+            "recommendation": "Considerar preload solo si el dominio y todos sus subdominios soportan HTTPS de forma permanente."
+        }
+
     return {
         "header": header_name,
         "status": "present",
         "severity": "OK",
-        "description": f"HSTS está configurado con max-age adecuado: {max_age} segundos.",
+        "description": f"HSTS está configurado correctamente con max-age adecuado e includeSubDomains: {max_age} segundos.",
         "recommendation": "No se requiere acción."
     }
 

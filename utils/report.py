@@ -1,8 +1,8 @@
-from fileinput import filename
 import os
 import json
 
 REPORTS_DIR = "reports"
+
 
 def generate_report(url, findings, summary, timestamp):
     """
@@ -14,11 +14,11 @@ def generate_report(url, findings, summary, timestamp):
 
     safe_url = url.replace("https://", "").replace("http://", "")
     safe_url = safe_url.replace("/", "_").replace(".", "_")
-    
+
     safe_timestamp = timestamp.replace(":", "-").replace(" ", "_")
-    
+
     os.makedirs(REPORTS_DIR, exist_ok=True)
-    
+
     filename = f"security_report_{safe_url}_{safe_timestamp}.txt"
     filepath = os.path.join(REPORTS_DIR, filename)
 
@@ -34,16 +34,12 @@ def generate_report(url, findings, summary, timestamp):
             description = finding["description"]
             recommendation = finding["recommendation"]
 
-            if status == "present":
-                file.write(f"[OK] {header} → presente\n")
+            if severity == "OK":
+                file.write(f"[OK] {header} → {status}\n")
                 file.write(f"Función: {description}\n\n")
-            elif status == "missing":
-                file.write(f"[{severity}] {header} → no encontrado\n")
-                file.write(f"Riesgo: {description}\n")
-                file.write(f"Recomendación: {recommendation}\n\n")
-            elif status == "exposed":
-                file.write(f"[{severity}] {header} → expuesto\n")
-                file.write(f"Riesgo: {description}\n")
+            else:
+                file.write(f"[{severity}] {header} → {status}\n")
+                file.write(f"Hallazgo: {description}\n")
                 file.write(f"Recomendación: {recommendation}\n\n")
 
         file.write("=== RESUMEN ===\n")
@@ -51,27 +47,30 @@ def generate_report(url, findings, summary, timestamp):
         file.write(f"HIGH:   {summary['HIGH']}\n")
         file.write(f"MEDIUM: {summary['MEDIUM']}\n")
         file.write(f"LOW:    {summary['LOW']}\n")
+        file.write(f"INFO:   {summary['INFO']}\n")
         file.write(f"OK:     {summary['OK']}\n")
 
     print(f"\n[INFO] Reporte generado: {filename}")
+
 
 def generate_json_report(url, findings, summary, timestamp):
     """
     Genera un reporte en formato JSON con los hallazgos.
     """
     json_summary = {
-    "total": summary["total"],
-    "high": summary["HIGH"],
-    "medium": summary["MEDIUM"],
-    "low": summary["LOW"],
-    "ok": summary["OK"]
+        "total": summary["total"],
+        "high": summary["HIGH"],
+        "medium": summary["MEDIUM"],
+        "low": summary["LOW"],
+        "info": summary["INFO"],
+        "ok": summary["OK"],
     }
-    
+
     report_data = {
         "url": url,
         "timestamp": timestamp,
         "findings": findings,
-        "summary": json_summary
+        "summary": json_summary,
     }
 
     safe_url = url.replace("https://", "").replace("http://", "")

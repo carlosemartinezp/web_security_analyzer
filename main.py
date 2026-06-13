@@ -4,12 +4,7 @@ from scanner.headers import analyze_headers
 from utils.report import generate_report, generate_json_report
 
 # Define el orden de prioridad de las severidades
-SEVERITY_ORDER = {
-    "HIGH": 1,
-    "MEDIUM": 2,
-    "LOW": 3,
-    "OK": 4
-}
+SEVERITY_ORDER = {"HIGH": 1, "MEDIUM": 2, "LOW": 3, "INFO": 4, "OK": 5}
 
 
 def main():
@@ -39,12 +34,7 @@ def main():
 
     print("\n=== ANÁLISIS DE SEGURIDAD ===\n")
 
-    summary = {
-        "HIGH": 0,
-        "MEDIUM": 0,
-        "LOW": 0,
-        "OK": 0
-    }
+    summary = {"HIGH": 0, "MEDIUM": 0, "LOW": 0, "INFO": 0, "OK": 0}
 
     summary["total"] = len(findings)
 
@@ -57,16 +47,12 @@ def main():
 
         summary[severity] += 1
 
-        if status == "present":
-            print(f"[OK] {header} → presente")
+        if severity == "OK":
+            print(f"[OK] {header} → {status}")
             print(f"     Función: {description}\n")
-        elif status == "missing":
-            print(f"[{severity}] {header} → no encontrado")
-            print(f"     Riesgo: {description}")
-            print(f"     Recomendación: {recommendation}\n")
-        elif status == "exposed":
-            print(f"[{severity}] {header} → expuesto")
-            print(f"     Riesgo: {description}")
+        else:
+            print(f"[{severity}] {header} → {status}")
+            print(f"     Hallazgo: {description}")
             print(f"     Recomendación: {recommendation}\n")
 
     print("=== RESUMEN ===")
@@ -74,11 +60,12 @@ def main():
     print(f"HIGH:   {summary['HIGH']}")
     print(f"MEDIUM: {summary['MEDIUM']}")
     print(f"LOW:    {summary['LOW']}")
+    print(f"INFO:   {summary['INFO']}")
     print(f"OK:     {summary['OK']}")
 
     generate_report(url, findings, summary, timestamp)
     generate_json_report(url, findings, summary, timestamp)
 
+
 if __name__ == "__main__":
     main()
-    
